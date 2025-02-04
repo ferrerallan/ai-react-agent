@@ -36,8 +36,8 @@ def get_intraday_data(symbol: str) -> str:
    try:
        response = requests.get("https://www.alphavantage.co/query", params=params)
        data = response.json()
-       print(data)
-       
+       print("***** FINANCE TOOL *****")
+
        if "Error Message" in data:
            return f"Error: {data['Error Message']}"
        
@@ -45,9 +45,11 @@ def get_intraday_data(symbol: str) -> str:
        if not time_series:
            return "No data found"
        
+       
        latest_date = list(time_series.keys())[0]
        latest_data = time_series[latest_date]
        
+    #    print(latest_data)
        return f"Intraday data for {symbol} ({latest_date}):\n" + \
               f"Open: ${latest_data['1. open']}\n" + \
               f"High: ${latest_data['2. high']}\n" + \
@@ -77,11 +79,13 @@ def get_weather_data(city: str) -> str:
     try:
         response = requests.get("http://api.weatherapi.com/v1/current.json", params=params)
         data = response.json()
-        print(data)
+
+        print("***** WEATHER TOOL *****")
+        
         
         if "error" in data:
             return f"Error: {data['error']['message']}"
-        
+        # print(data["location"])
         location = data["location"]
         current = data["current"]
         condition = current["condition"]
