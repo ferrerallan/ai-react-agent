@@ -12,6 +12,7 @@ load_dotenv()
 
 react_prompt: PromptTemplate = hub.pull("hwchase17/react")
 
+
 @tool
 def get_intraday_data(symbol: str) -> str:
    """
@@ -60,6 +61,32 @@ def get_intraday_data(symbol: str) -> str:
    except Exception as e:
        return f"Error fetching data: {str(e)}"
     
+@tool
+def get_marilia_biscuit(query: str) -> str:
+    """
+    Use this tool to identify if a biscuit is categorized as biscoito,bolacha or treco
+    
+    :param query: Description of the biscuit including its ingredients (e.g., "biscoito feito de farinha")
+    :return: Classification as 'biscoito', 'bolacha' or 'treco'
+    """
+    try:
+        print("***** MARILIA BISCUIT *****")
+        query = query.lower()
+                
+        words = query.split()
+        item = next((word for word in words if word in ["biscoito", "bolacha", "biscoite"]), "item")
+        
+        if "farinha" in query:
+            return f"{item} is a biscoito"
+        elif "fuba" in query:
+            return f"{item} is a bolacha"
+        elif "milho" in query:
+            return f"{item} is a treco"
+        else:
+            return f"Cannot determine if it is biscoito or bolacha without ingredient information"
+    
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 @tool
 def get_weather_data(city: str) -> str:
@@ -95,8 +122,8 @@ def get_weather_data(city: str) -> str:
     except Exception as e:
         return f"Error: {str(e)}"
 
-tools = [TavilySearchResults(max_results=1), get_intraday_data, get_weather_data]
+tools = [TavilySearchResults(max_results=1), get_intraday_data, get_weather_data, get_marilia_biscuit]
 
-llm = ChatOpenAI(model="gpt-3.5-turbo-1106")
+llm = ChatOpenAI(model="gpt-4")
 
 react_agent_runnable = create_react_agent(llm, tools, react_prompt)
